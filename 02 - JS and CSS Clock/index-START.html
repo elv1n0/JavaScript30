@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>JS + CSS Clock</title>
+  <link rel="icon" href="https://fav.farm/🔥" />
+</head>
+<body>
+
+
+    <div class="clock">
+      <div class="clock-face">
+        <!-- Hands are stacked on top of each other -->
+        <div class="hand hour-hand"></div>
+        <div class="hand min-hand"></div>
+        <div class="hand second-hand"></div>
+      </div>
+    </div>
+
+
+  <style>
+    html {
+      background: #018DED url(https://unsplash.it/1500/1000?image=881&blur=5);
+      background-size: cover;
+      font-family: 'helvetica neue';
+      text-align: center;
+      font-size: 10px;
+    }
+
+    body {
+      margin: 0;
+      font-size: 2rem;
+      display: flex;
+      flex: 1;
+      min-height: 100vh;
+      align-items: center;
+    }
+
+    .clock {
+      width: 30rem;
+      height: 30rem;
+      border: 20px solid white;
+      border-radius: 50%;
+      margin: 50px auto;
+      position: relative;
+      padding: 2rem;
+      box-shadow:
+        0 0 0 4px rgba(0,0,0,0.1),
+        inset 0 0 0 3px #EFEFEF,
+        inset 0 0 10px black,
+        0 0 10px rgba(0,0,0,0.2);
+    }
+
+    .clock-face {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform: translateY(-3px); /* Account for the height of the clock hands */
+    }
+
+    .hand {
+      width: 50%;
+      height: 6px;
+      background: black;
+      position: absolute;
+      top: 50%;
+      right: 50%;
+      transform-origin: 100%; /* Change origin to rotate hands on the very right hand side */
+      transform: rotate(90deg); /* Rotate the hands so they start at 12 */
+      transition: all 0.5s;
+      transition-timing-function: cubic-bezier(0.1, 2.7, 0.58, 1);
+    }
+
+    .hour-hand {
+      width: 35%;
+      height: 8px;
+    }
+
+    .min-hand {
+      width: 45%;
+      height: 6px;
+    }
+
+    .second-hand {
+      width: 50%;
+      height: 3px;
+    }
+
+  </style>
+
+  <script>
+    const secondHand = document.querySelector('.second-hand');
+    const minuteHand = document.querySelector('.min-hand');
+    const hourHand = document.querySelector('.hour-hand');
+
+    let previousSeconds = new Date().getSeconds();
+    let previousMinutes = new Date().getMinutes();
+    let previousHours = new Date().getHours();
+
+    let secondExtraRotation = 0;
+    let minuteExtraRotation = 0;
+    let hourExtraRotation = 0;
+
+    function setDate() {
+      const now = new Date();
+
+      const seconds = now.getSeconds();
+      const minutes = now.getMinutes();
+      const hours = now.getHours();
+
+      // If seconds jump from 59 to 0 
+      if (seconds === 0 && previousSeconds === 59) {
+        secondExtraRotation += 360;
+      }
+
+      // If minutes jump from 59 to 0 
+      if (minutes === 0 && previousMinutes === 59) {
+        minuteExtraRotation += 360;
+      }
+
+      // If hours jump from 59 to 0 
+      if (hours === 0 && previousHours === 23) {
+        hourExtraRotation += 360;
+      }
+
+      const secondsDegrees = ((seconds / 60) * 360) + 90 + secondExtraRotation;
+
+      const minutesDegrees =
+        ((minutes / 60) * 360) +
+        ((seconds / 60) * 6) +
+        90 +
+        minuteExtraRotation;
+
+      const hoursDegrees =
+        ((hours / 12) * 360) +
+        ((minutes / 60) * 30) +
+        90 +
+        hourExtraRotation;
+
+      secondHand.style.transform = `rotate(${secondsDegrees}deg)`;
+      minuteHand.style.transform = `rotate(${minutesDegrees}deg)`;
+      hourHand.style.transform = `rotate(${hoursDegrees}deg)`;
+
+      previousSeconds = seconds;
+      previousMinutes = minutes;
+      previousHours = hours;
+    }
+
+    setDate();
+    setInterval(setDate, 1000);
+    
+  </script>
+</body>
+</html>
